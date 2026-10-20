@@ -24,7 +24,8 @@ public class StateEstimation {
         simulation.calcFinal();
     }
 
-    public void calcPrelim() {
+    public void calcPrelim()
+    {
         // Define the physical geometry in your Domain Model
         // These values are examples that give us Mach 3 at the exit
         simNozzle.setEntranceArea(0.15); // m^2
@@ -54,7 +55,7 @@ public class StateEstimation {
                 exit.getMachNumber(),
                 exit.getVelocity());
 
-        
+        // may not be needed for this section will depend on how PreLim is created
         simNozzle.stateOne = combustor.getPressure();
         simNozzle.stateTwo = entrance.getPressure();
         simNozzle.stateThree = throat.getPressure();
@@ -77,7 +78,8 @@ public class StateEstimation {
         exhaust.printState();
     }
 
-    public void calcFinal() {
+    public void calcFinal() 
+    {
         // TO-DO change this to accept calculated exit mach
         double exitMach = 3.0; // Design expansion ratio
 

@@ -13,10 +13,6 @@ public class StandardAtmosphere {
         return G0;
     }
 
-    // Calculates altitude from pressure using the ISA Troposphere model (up to
-    // 11,000m)
-    public static double calculateAltitudeFromPressure(double pressure) {
-        double exponent = -(R_AIR * L) / G0;
-        return (T0 / L) * (Math.pow((pressure / P0), exponent) - 1.0);
-    }
+    
+    // To-do actually create the atmosphere model
 }

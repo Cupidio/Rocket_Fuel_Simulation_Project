@@ -46,7 +46,7 @@ public class ThermodynamicSolver {
             midMach = (low + high) / 2.0;
 
             // Area-Mach equations
-            //Technically I can take the gammaFactor and tempRatio out of the for loop as these values
+            //Technically I can take the gammaFactor and exponent out of the for loop as these values
             //dont change for an isentropic flow, but I think im going to keep it as gamma isnt constant
             // in the CFD
             double gammaFactor = 2.0 / (gamma + 1.0);
@@ -79,12 +79,12 @@ public class ThermodynamicSolver {
     {
         double gamma = specificHeatRatio;
 
-        // Calculate Mass Flow Rate
+        // cal mass flow
         double gammaTerm = Math.sqrt(gamma / gasConstant)
                 * Math.pow(2.0 / (gamma + 1.0), (gamma + 1.0) / (2.0 * (gamma - 1.0)));
         double massFlowRate = (chamberPressure * throatArea / Math.sqrt(chamberTemp)) * gammaTerm;
 
-        // Get Exit State
+        // calc the exit values (thrust, isp, velo, pressure)
         FlowState exitState = computeIsentropicFlow("Exit", exitMach);
         double exitVelocity = exitState.getVelocity();
         double exitDensity = exitState.getPressure() / (gasConstant * exitState.getTemperature());

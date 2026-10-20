@@ -30,7 +30,7 @@ public class FlowState {
     }
 
     public void printState() {
-        System.out.printf("--- %s ---\n", stageName);
+        System.out.printf("=== %s ===\n", stageName);
         System.out.printf("Pressure:    %,.0f Pa\n", pressure);
         System.out.printf("Temperature: %.1f K\n", temperature);
         System.out.printf("Mach Number: %.2f\n", machNumber);

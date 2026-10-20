@@ -41,7 +41,7 @@ public class ThermodynamicSolver {
         double tolerance = 1e-6;
         double midMach = 0;
 
-        // Bisection method to find the Mach number
+        // using bisection method cause area-Mach have no closed form answer
         for (int i = 0; i < 100; i++) {
             midMach = (low + high) / 2.0;
 
@@ -58,7 +58,7 @@ public class ThermodynamicSolver {
                 break;
             }
 
-            // Change bounds based on flow behavior
+            // change bounds based on flow behavior 
             if (isSupersonic) {
                 if (calculatedRatio < areaRatio)
                     low = midMach;

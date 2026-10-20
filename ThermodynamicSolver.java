@@ -1,59 +1,64 @@
 public class ThermodynamicSolver {
 
     private double chamberTemp;
-    private double exitVelocity;
     private double specificHeatRatio; // Gamma
     private double gasConstant;
     private double chamberPressure;
 
     public ThermodynamicSolver(double specificHeatRatio, double gasConstant, double chamberPressure,
-            double chamberTemp) {
+            double chamberTemp) 
+    {
         this.specificHeatRatio = specificHeatRatio;
         this.gasConstant = gasConstant;
         this.chamberPressure = chamberPressure;
         this.chamberTemp = chamberTemp;
     }
 
-    public FlowState computeIsentropicFlow(String stageName, double machNumber) {
+    public FlowState computeIsentropicFlow(String stageName, double machNumber) 
+    {
         double gamma = specificHeatRatio;
 
         if (machNumber == 0.0) {
             return new FlowState(stageName, chamberPressure, chamberTemp, 0.0, 0.0);
         }
 
-        double tRatio = 1 + ((gamma - 1) / 2) * Math.pow(machNumber, 2);
-        double temp = chamberTemp / tRatio;
-        double pRatio = Math.pow(tRatio, gamma / (gamma - 1));
-        double pressure = chamberPressure / pRatio;
+        double temperatureRatio = 1 + ((gamma - 1) / 2) * Math.pow(machNumber, 2);
+        double temp = chamberTemp / temperatureRatio;
+        double pressureRatio = Math.pow(temperatureRatio, gamma / (gamma - 1));
+        double pressure = chamberPressure / pressureRatio;
         double velocity = machNumber * Math.sqrt(gamma * gasConstant * temp);
 
         return new FlowState(stageName, pressure, temp, machNumber, velocity);
     }
 
-    public double solveMachFromAreaRatio(double areaRatio, boolean isSupersonic) {
+    public double solveMachFromAreaRatio(double areaRatio, boolean isSupersonic) 
+    {
         double gamma = this.specificHeatRatio;
 
-        // Define search bounds based on flow regime
+        // Bounds based on flow regime
         double low = isSupersonic ? 1.00001 : 0.00001;
         double high = isSupersonic ? 15.0 : 0.99999;
         double tolerance = 1e-6;
         double midMach = 0;
 
-        // Bisection method to find the Mach number root
+        // Bisection method to find the Mach number
         for (int i = 0; i < 100; i++) {
             midMach = (low + high) / 2.0;
 
-            // Isentropic Area-Mach equation
-            double term1 = 2.0 / (gamma + 1.0);
-            double term2 = 1.0 + ((gamma - 1.0) / 2.0) * Math.pow(midMach, 2);
+            // Area-Mach equations
+            //Technically I can take the gammaFactor and tempRatio out of the for loop as these values
+            //dont change for an isentropic flow, but I think im going to keep it as gamma isnt constant
+            // in the CFD
+            double gammaFactor = 2.0 / (gamma + 1.0);
+            double tempRatio = 1.0 + ((gamma - 1.0) / 2.0) * Math.pow(midMach, 2);
             double exponent = (gamma + 1.0) / (2.0 * (gamma - 1.0));
-            double calculatedRatio = (1.0 / midMach) * Math.pow(term1 * term2, exponent);
+            double calculatedRatio = (1.0 / midMach) * Math.pow( gammaFactor* tempRatio, exponent);
 
             if (Math.abs(calculatedRatio - areaRatio) < tolerance) {
                 break;
             }
 
-            // Adjust bounds based on flow regime behavior
+            // Change bounds based on flow behavior
             if (isSupersonic) {
                 if (calculatedRatio < areaRatio)
                     low = midMach;
@@ -70,7 +75,8 @@ public class ThermodynamicSolver {
         return midMach;
     }
 
-    public ThrustData calculateThrustState(double throatArea, double exitMach, double ambientPressure) {
+    public ThrustData calculateThrustState(double throatArea, double exitMach, double ambientPressure) 
+    {
         double gamma = specificHeatRatio;
 
         // Calculate Mass Flow Rate
@@ -78,15 +84,12 @@ public class ThermodynamicSolver {
                 * Math.pow(2.0 / (gamma + 1.0), (gamma + 1.0) / (2.0 * (gamma - 1.0)));
         double massFlowRate = (chamberPressure * throatArea / Math.sqrt(chamberTemp)) * gammaTerm;
 
-        // Get Exit State to find Exit Velocity and Area
+        // Get Exit State
         FlowState exitState = computeIsentropicFlow("Exit", exitMach);
-        this.exitVelocity = exitState.getVelocity(); // Storing attribute
-
+        double exitVelocity = exitState.getVelocity();
         double exitDensity = exitState.getPressure() / (gasConstant * exitState.getTemperature());
-        double exitArea = massFlowRate / (exitDensity * this.exitVelocity);
-
-        // Calculate Thrust
-        double momentumThrust = massFlowRate * this.exitVelocity;
+        double exitArea = massFlowRate / (exitDensity * exitVelocity);
+        double momentumThrust = massFlowRate * exitVelocity;
         double pressureThrust = (exitState.getPressure() - ambientPressure) * exitArea;
         double totalThrust = momentumThrust + pressureThrust;
 

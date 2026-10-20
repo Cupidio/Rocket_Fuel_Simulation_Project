@@ -1,5 +1,6 @@
 public class Nozzle {
 
+    // currently not needed but will be for Prelim interface
     public double stateOne;
     public double stateTwo;
     public double stateThree;

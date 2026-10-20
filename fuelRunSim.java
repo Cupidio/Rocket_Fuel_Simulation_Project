@@ -10,46 +10,49 @@ import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Scanner;
-import javafx.application.Application;
+/*import javafx.application.Application;
 import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
+import javafx.stage.Stage;*/
 
-public class fuelRunSim extends Application{
+public class fuelRunSim {// extends Application {
 
-    //C: Load the database of prelim and final states from a CSV file
-    private loadDroneDB db;
+    // C: Load the database of prelim and final states from a CSV file
+    private loadFuelSimDB db;
 
     public fuelRunSim() {
-        db = new loadDroneDB();
-
-        db.addPrelim(new Prelim(1, 2, 3, 4));
-        db.addPrelim(new Final());
+        db = new loadFuelSimDB();
+        // db.addPrelim(new Prelim(1, 2.0, 3.0, 4.0, 5.0));
+        // db.addPrelim(new Prelim(1, 2, 3, 4));
+        // db.addPrelim(new Final());
     }
 
-    //C: Run the main application loop of the program for menu input
+    // C: Run the main application loop of the program for menu input
     public static void main(String[] args) {
-        launch(args);
+        // launch(args);
         fuelRunSim app = new fuelRunSim();
         app.runApp();
     }
 
-    //C: Use JavaFX later to create a GUI for the program with beginner friendly buttons and input fields for the user to interact with
-    /*public void start(javafx.stage.Stage primaryStage) {
-        VBox vbox = new VBox(10);
+    // C: Use JavaFX later to create a GUI for the program with beginner friendly
+    // buttons and input fields for the user to interact with
+    /*
+     * public void start(javafx.stage.Stage primaryStage) {
+     * VBox vbox = new VBox(10);
+     * 
+     * javafx.scene.Scene scene = new javafx.scene.Scene(vbox, 400, 300);
+     * 
+     * primaryStage.setScene(scene);
+     * 
+     * primaryStage.setTitle("Drone Run Simulation");
+     * 
+     * primaryStage.show();
+     * }
+     */
 
-        javafx.scene.Scene scene = new javafx.scene.Scene(vbox, 400, 300);
-
-        primaryStage.setScene(scene);
-
-        primaryStage.setTitle("Drone Run Simulation");
-
-        primaryStage.show();
-    }*/
-
-    //C: Run the main appllicaiton of the progam inccluding the menu
+    // C: Run the main appllicaiton of the progam inccluding the menu
     public void runApp() {
         Scanner scan = new Scanner(System.in);
-        loadWordsFromFile("families.csv");
+        loadWordsFromFile("simResults.csv");
         int choice = 0;
         do {
             choice = menu(scan);
@@ -58,7 +61,8 @@ public class fuelRunSim extends Application{
         scan.close();
     }
 
-    //C: Main menu function that displays the options of the menu and takes the user input
+    // C: Main menu function that displays the options of the menu and takes the
+    // user input
     public int menu(Scanner scan) {
         while (true) {
             String message = """
@@ -85,10 +89,10 @@ public class fuelRunSim extends Application{
         }
     }
 
-    //C: Process the user input from the menu and selects the correct option
+    // C: Process the user input from the menu and selects the correct option
     public void processChoice(Scanner scan, int choice) {
         switch (choice) {
-            //C: This starts the fuel simulation
+            // C: This starts the fuel simulation
             case 1:
                 startSim(scan);
                 break;
@@ -103,6 +107,44 @@ public class fuelRunSim extends Application{
         }
     }
 
+    // C: Supposed to start the simulation by asking the user to input the prelim
+    // values so the optimal states can be calculated
+    public void startSim(Scanner scan) {
+        System.out.print("Enter Simulation ID (integer): ");
+        int id = Integer.parseInt(scan.nextLine());
+
+        System.out.print("Enter Nozzle Entrance Area (m^2, e.g., 0.15): ");
+        double entranceArea = Double.parseDouble(scan.nextLine());
+
+        System.out.print("Enter Nozzle Throat Area (m^2, e.g., 0.05): ");
+        double throatArea = Double.parseDouble(scan.nextLine());
+
+        System.out.print("Enter Nozzle Exit Area (m^2, e.g., 0.2115): ");
+        double exitArea = Double.parseDouble(scan.nextLine());
+
+        StateEstimation calculator = new StateEstimation();
+        // C: Function has not been made yet
+        Prelim result = calculator.runSimGetResult(id, entranceArea, throatArea, exitArea);
+
+        db.addPrelim(result);
+        System.out.println("\nSimulation completed successfully and added to the database!");
+    }
+
+    public void displaySimResults() {
+        System.out.println("\n--- PREVIOUS FUEL SIMULATION RESULTS ---");
+        if (db.getPrelimStates().isEmpty()) {
+            System.out.println("No previous simulation records found.");
+            return;
+        }
+
+        for (Prelim p : db.getPrelimStates()) {
+            System.out.printf(
+                    "ID: %d | State 1: %.2f | State 2: %.2f | State 3: %.2f | State 4: %.2f | State 5: %.2f \n",
+                    p.getId(), p.getStateOne(), p.getStateTwo(), p.getStateThree(), p.getStateFour(), p.getStateFive());
+        }
+        System.out.println();
+    }
+
     public void saveInfo(Scanner scan) {
         String fileName;
         System.out.print(
@@ -110,9 +152,9 @@ public class fuelRunSim extends Application{
         fileName = scan.nextLine();
         try {
             PrintWriter writer = new PrintWriter(fileName);
-            for (Family f : db.getFams()) {
-                String species = f.getClass().getSimpleName();
-                writer.println(species + "," + f.getFamName() + "," + f.getOrigPlanet());
+            for (Prelim p : db.getPrelimStates()) {
+                writer.println(p.getId() + "," + p.getStateOne() + "," + p.getStateTwo() + "," + p.getStateThree() + ","
+                        + p.getStateFour() + p.getStateFive());
             }
             writer.close();
             System.out.println("Database saved to file!");
@@ -127,6 +169,7 @@ public class fuelRunSim extends Application{
             Scanner fileHandle = new Scanner(new File(filename));
 
             while (fileHandle.hasNextLine()) {
+
                 String line = fileHandle.nextLine();
                 String lineTrim = line.trim();
 
@@ -135,28 +178,19 @@ public class fuelRunSim extends Application{
                 }
 
                 String[] parts = line.split(",");
-
-                String prelim = parts[0];
-                String name = parts[1];
-                String origin = parts[2];
-
-                Family fam = null;
-
-                if (species.equalsIgnoreCase("Nkisi")) {
-                    fam = new Nkisi(name, origin);
-                } else if (species.equalsIgnoreCase("Neohumans")) {
-                    fam = new Neohumans(name, origin);
-                } else if (species.equalsIgnoreCase("Saints")) {
-                    fam = new Saints(name, origin);
-                } else if (species.equalsIgnoreCase("Ethirans")) {
-                    fam = new Ethirans(name, origin);
+                if (parts.length < 6) {
+                    continue;
                 }
 
-                if (fam != null) {
-                    db.addFamily(fam);
-                } else {
-                    System.out.println("Unknown species in file: " + species);
-                }
+                int id = Integer.parseInt(parts[0].trim());
+                double stateOne = Double.parseDouble(parts[1].trim());
+                double stateTwo = Double.parseDouble(parts[2].trim());
+                double stateThree = Double.parseDouble(parts[3].trim());
+                double stateFour = Double.parseDouble(parts[4].trim());
+                double stateFive = Double.parseDouble(parts[5].trim());
+
+                Prelim prelim = new Prelim(id, stateOne, stateTwo, stateThree, stateFour, stateFive);
+                db.addPrelim(prelim);
 
             }
 
@@ -173,11 +207,5 @@ public class fuelRunSim extends Application{
     public void exitProgram(Scanner scan) {
         saveInfo(scan);
         System.out.println("This program has now concluded. All data has been uploaded.");
-    }
-
-    @Override
-    public void start(Stage arg0) throws Exception {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'start'");
     }
 }

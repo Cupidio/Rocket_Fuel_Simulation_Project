@@ -1,10 +1,10 @@
 import java.util.ArrayList;
 
-public class loadDroneDB {
+public class loadFuelSimDB {
     private ArrayList<Prelim> pre;
     private ArrayList<Final> fin;
 
-    public loadDroneDB() {
+    public loadFuelSimDB() {
         pre = new ArrayList<>();
         fin = new ArrayList<>();
     }

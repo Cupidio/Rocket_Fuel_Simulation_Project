@@ -5,17 +5,18 @@ public class Prelim {
     private double stateTwo;
     private double stateThree;
     private double stateFour;
+    private double stateFive;
 
-    public Prelim(int id, double stateOne, double stateTwo, double stateThree, double stateFour) {
+    public Prelim(int id, double stateOne, double stateTwo, double stateThree, double stateFour, double stateFive) {
         this.id = id;
         this.stateOne = stateOne;
         this.stateTwo = stateTwo;
         this.stateThree = stateThree;
         this.stateFour = stateFour;
+        this.stateFive = stateFive;
     }
 
-
-    //C: Change the states into temperature and pressure values for the final code    
+    // C: Change the states into temperature and pressure values for the final code
     public void setStateOne(double stateOne) {
         this.stateOne = stateOne;
     }
@@ -32,6 +33,10 @@ public class Prelim {
         this.stateFour = stateFour;
     }
 
+    public void setStateFive(double stateFive) {
+        this.stateFive = stateFive;
+    }
+
     public double getStateOne() {
         return stateOne;
     }
@@ -46,6 +51,10 @@ public class Prelim {
 
     public double getStateFour() {
         return stateFour;
+    }
+
+    public double getStateFive() {
+        return stateFive;
     }
 
     public int getId() {

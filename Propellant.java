@@ -1,4 +1,5 @@
-public class Propellant extends Prelim {
+public class Propellant {
+
     private String name;
     private double propellantArea;
     private double density;
@@ -7,9 +8,6 @@ public class Propellant extends Prelim {
     private double specificHeatRatio;
     private double flameTemperature;
 
-    public Propellant() {
-        super(0, 0.0, 0.0, 0.0, 0.0, 0.0);
-    }
 
     public String getName() {
         return name;

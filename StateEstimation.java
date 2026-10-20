@@ -93,10 +93,10 @@ public class StateEstimation {
         double isp = totalThrust / (massFlowRate * G0);
 
         // Calculate Optimal Altitude (rudimentary model this will be changed)
-        double l = -0.0065;
+        double tempLapseRate = -0.0065;
         double t0 = 288.15;
-        double exponent = -(287.05 * l) / G0;
-        double optimalAlt = (t0 / l) * (Math.pow((exitPressure / AMBIENT_PRESSURE), exponent) - 1.0);
+        double exponent = -(287.05 * tempLapseRate) / G0;
+        double optimalAlt = (t0 / tempLapseRate) * (Math.pow((exitPressure / AMBIENT_PRESSURE), exponent) - 1.0);
 
         // Print the Report
         System.out.println("=== FINAL ENGINE PERFORMANCE METRICS ===");

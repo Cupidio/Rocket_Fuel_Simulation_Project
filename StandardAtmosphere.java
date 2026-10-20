@@ -2,7 +2,7 @@ public class StandardAtmosphere {
     private static final double P0 = 101325.0; // Sea level standard pressure (Pa)
     private static final double T0 = 288.15; // Sea level standard temperature (K)
     private static final double L = -0.0065; // Temperature lapse rate (K/m)
-    private static final double G0 = 9.80665; // Standard gravity (m/s^2)
+    private static final double G0 = 9.80665; // (m/s^2)
     private static final double R_AIR = 287.05;// Specific gas constant for air
 
     public static double getSeaLevelPressure() {

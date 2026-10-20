@@ -12,5 +12,6 @@
         "c:\\Users\\mxz\\Downloads\\openjfx-27_windows-x64_bin-sdk\\javafx-sdk-27\\lib\\javafx.web.jar",
         "c:\\Users\\mxz\\Downloads\\openjfx-27_windows-x64_bin-sdk\\javafx-sdk-27\\lib\\javafx-swt.jar",
         "c:\\Users\\mxz\\Downloads\\openjfx-27_windows-x64_bin-sdk\\javafx-sdk-27\\lib\\jdk.jsobject.jar"
-    ]
+    ],
+    "java.project.explorer.showNonJavaResources": false
 }

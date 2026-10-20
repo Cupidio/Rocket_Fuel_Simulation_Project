@@ -59,7 +59,7 @@ public class StateEstimation {
         simNozzle.stateThree = throat.getPressure();
         simNozzle.stateFour = exit.getPressure();
         simNozzle.stateFive = exhaust.getPressure();
-        simCombustor.stateOne = combustor.getPressure();
+        // simCombustor.stateOne = combustor.getPressure();
 
         // Print the complete preliminary report
         System.out.println("--- NOZZLE KINEMATICS ---");

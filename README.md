@@ -1,1 +1,3 @@
-# SFTW300_Project
+# Solid Fuel Combustion Simulation
+
+The Solid Fuel Combustion Engine Simulation is a desktop tool created to help simulate/model the internal ballistics, exhaust flow through a nozzle, propellant grain regression. Using the graphs in the simulation will all be done without using physical items to minimize cost. It mainly uses Java and JavaFx to calculate complex physics equations then present it into a general user interface. The GUI will present a menu with multiple options, such as changing parameter values for the nozzle, saving the user's current simulation data in a file of their choice and more. 

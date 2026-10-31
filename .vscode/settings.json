@@ -11,7 +11,18 @@
         "c:\\Users\\mxz\\Downloads\\openjfx-27_windows-x64_bin-sdk\\javafx-sdk-27\\lib\\javafx.swing.jar",
         "c:\\Users\\mxz\\Downloads\\openjfx-27_windows-x64_bin-sdk\\javafx-sdk-27\\lib\\javafx.web.jar",
         "c:\\Users\\mxz\\Downloads\\openjfx-27_windows-x64_bin-sdk\\javafx-sdk-27\\lib\\javafx-swt.jar",
-        "c:\\Users\\mxz\\Downloads\\openjfx-27_windows-x64_bin-sdk\\javafx-sdk-27\\lib\\jdk.jsobject.jar"
+        "c:\\Users\\mxz\\Downloads\\openjfx-27_windows-x64_bin-sdk\\javafx-sdk-27\\lib\\jdk.jsobject.jar",
+        "c:\\Windows\\javafx-sdk-27\\lib\\javafx.base.jar",
+        "c:\\Windows\\javafx-sdk-27\\lib\\javafx.controls.jar",
+        "c:\\Windows\\javafx-sdk-27\\lib\\javafx.fxml.jar",
+        "c:\\Windows\\javafx-sdk-27\\lib\\javafx.graphics.jar",
+        "c:\\Windows\\javafx-sdk-27\\lib\\javafx.media.jar",
+        "c:\\Windows\\javafx-sdk-27\\lib\\javafx.swing.jar",
+        "c:\\Windows\\javafx-sdk-27\\lib\\javafx.web.jar",
+        "c:\\Windows\\javafx-sdk-27\\lib\\javafx-swt.jar",
+        "c:\\Windows\\javafx-sdk-27\\lib\\jdk.jsobject.jar",
+        "c:\\Windows\\javafx-sdk-27\\lib\\jfx.incubator.input.jar",
+        "c:\\Windows\\javafx-sdk-27\\lib\\jfx.incubator.richtext.jar"
     ],
     "java.project.explorer.showNonJavaResources": false
 }

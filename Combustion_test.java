@@ -13,6 +13,9 @@ public class Combustion_test {
     }
 
     public void setCombustorLength(double combustorLength) {
+        if (combustorLength <= 0) {
+            throw new IllegalArgumentException("Combustor length must be greater than 0");
+        }
         this.combustorLength = combustorLength;
     }
 
@@ -21,6 +24,9 @@ public class Combustion_test {
     }
 
     public void setCombustorArea(double combustorArea) {
+        if (combustorArea <= 0) {
+            throw new IllegalArgumentException("Combustor area must be greater than 0");
+        }
         this.combustorArea = combustorArea;
     }
 }

@@ -12,7 +12,10 @@ public class Nozzle {
     private double exitArea;
     private double nozzleLength;
 
-    public Nozzle() {
+    public Nozzle(double entranceArea, double throatArea, double exitArea) {
+        setEntranceArea(entranceArea);
+        setThroatArea(throatArea);
+        setExitArea(exitArea);
     }
 
     public double getEntranceArea() { 

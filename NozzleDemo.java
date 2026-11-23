@@ -6,6 +6,7 @@ public class NozzleDemo {
         double exitArea = 8.0 * throatArea;
         double ambientPressure = StandardAtmosphere.pressureAt(0.0); // sea level
 
+        Nozzle nozzle = new Nozzle(entranceArea, throatArea, exitArea);
         Propellant knsu = new Propellant();
         knsu.setName("KNSU");
         knsu.setDensity(1841.0);
@@ -16,7 +17,7 @@ public class NozzleDemo {
         knsu.setGasConstant(8314.46 / 39.86);
 
         knsu.setPropellantArea(0.045);
-        new StateEstimation(knsu, ambientPressure, entranceArea, throatArea, exitArea).printReport();
+        new StateEstimation(knsu,ambientPressure,nozzle).printReport();
 
     }
 }

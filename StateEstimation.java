@@ -3,10 +3,9 @@ import java.util.Objects;
 public class StateEstimation {
 
     // init
-    private Propellant simPropellant;
-    private Nozzle simNozzle;
-    private ThermodynamicSolver solver;
-
+    private final Propellant simPropellant;
+    private final Nozzle simNozzle;
+    private final ThermodynamicSolver solver;
     private final double ambientPressure;
 
     // Results
@@ -19,7 +18,7 @@ public class StateEstimation {
     private NozzleRegime regime;
     private double shockUpstreamMach = Double.NaN; // NaN unless regime is SHOCK_IN_NOZZLE
     private double shockArea = Double.NaN;
-    private double kn = Double.NaN;                // NaN unless built from a Propellant
+    private final double kn;
     private double optimalAltitude;
     private FlowState exitState;
     private FlowState[] flowStates;
@@ -27,9 +26,9 @@ public class StateEstimation {
     private ThrustData[] stageThrustData;
     private ThrustData performanceData;
 
-    // Use when chamber pressure is given directly THIS ISNT NEEDED ANYMORE
-    public StateEstimation(double gamma, double gasConstant, double chamberPressure,
-            double chamberTemp, double ambientPressure, Nozzle nozzle) {
+    // Chamber pressure solved from the propellant. Its area is the burning surface A_b
+    public StateEstimation(Propellant propellant, double ambientPressure, Nozzle nozzle) {
+        Objects.requireNonNull(propellant, "Propellant must not be null");
         Objects.requireNonNull(nozzle, "Nozzle must not be null");
 
         double entranceArea = nozzle.getEntranceArea();
@@ -46,26 +45,21 @@ public class StateEstimation {
             throw new IllegalArgumentException("Ambient pressure must be positive");
         }
 
-        this.simPropellant = new Propellant();
+        double chamberPressure = chamberPressureForSolver(propellant, throatArea);
+
+        this.simPropellant = propellant;
         this.simNozzle = nozzle;
-        this.solver = new ThermodynamicSolver(gamma, gasConstant, chamberPressure, chamberTemp);
         this.ambientPressure = ambientPressure;
+        this.kn = propellant.getPropellantArea() / throatArea;
+        this.solver = new ThermodynamicSolver(
+                propellant.getSpecificHeatRatio(),
+                propellant.getGasConstant(),
+                chamberPressure,
+                propellant.getFlameTemperature());
 
         // calcFinal() needs state from calcPrelim()
         calcPrelim();
         calcFinal();
-    }
-
-    // Chamber pressure solved from the propellant. Its area is the burning surface A_b
-    public StateEstimation(Propellant propellant, double ambientPressure, Nozzle nozzle) {
-        this(Objects.requireNonNull(propellant, "Propellant must not be null").getSpecificHeatRatio(),
-                propellant.getGasConstant(),
-                chamberPressureForSolver(propellant, Objects.requireNonNull(nozzle, "Nozzle must not be null").getThroatArea()),
-                propellant.getFlameTemperature(),
-                ambientPressure,
-                nozzle);
-        this.simPropellant = propellant;
-        this.kn = propellant.getPropellantArea() / nozzle.getThroatArea();
     }
 
     private static double chamberPressureForSolver(Propellant prop, double throatArea) {
@@ -86,7 +80,7 @@ public class StateEstimation {
         this.designExitPressure = solver.designExitPressure(expansionRatio);
         this.exitShockPressure = solver.exitShockPressure(expansionRatio);
 
-        // Decide the flow regime (throws if the nozzle won't choke)
+        //regime (throws if nozzle won't choke)
         this.regime = solver.classifyRegime(expansionRatio, ambientPressure);
 
         FlowState combustor = solver.computeIsentropicFlow("Combustor", 0.0);
@@ -132,10 +126,10 @@ public class StateEstimation {
                     massFlow, flowStates[i], stageAreas[i], ambientPressure);
         }
 
-        // Keep performanceData as the exit stage
+        // Keep performace data
         this.performanceData = stageThrustData[stageThrustData.length - 1];
 
-        // Alt where ambient pressure equals design exit pressure
+        // Alt where ambient pressure equals design exit pressure may need changes
         this.optimalAltitude = StandardAtmosphere.altitudeForPressure(designExitPressure);
     }
 
@@ -182,48 +176,67 @@ public class StateEstimation {
     }
 
     // Getters
-    public FlowState[] getFlowStates() { 
-        return flowStates; }
-    public FlowState getExitState() { 
-        return exitState; }
-    public ThrustData[] getStageThrustData() { 
-        return stageThrustData; }
-    public ThrustData getPerformanceData() { 
-        return performanceData; }
-    public NozzleRegime getRegime() { 
-        return regime; }
-    public String getRegimeDescription() { 
-        return regime.getDescription(); }
-    public double getChamberPressure() { 
-        return solver.getChamberPressure(); }
-    public double getChamberTemp() { 
-        return solver.getChamberTemp(); }
-    public double getCharacteristicVelocity() { 
-        return solver.getCharacteristicVelocity(); }
-    public double getAmbientPressure() { 
-        return ambientPressure; }
-    public double getContractionRatio() { 
-        return contractionRatio; }
-    public double getExpansionRatio() { 
-        return expansionRatio; }
-    public double getEntranceMach() { 
-        return entranceMach; }
-    public double getDesignExitMach() { 
-        return designExitMach; }
-    public double getDesignExitPressure() { 
-        return designExitPressure; }
-    public double getExitShockPressure() { 
-        return exitShockPressure; }
-    public double getShockUpstreamMach() { 
-        return shockUpstreamMach; }
-    public double getShockArea() { 
-        return shockArea; }
-    public double getKn() { 
-        return kn; }
-    public double getOptimalAltitude() { 
-        return optimalAltitude; }
+    public FlowState[] getFlowStates() {
+        return flowStates;
+    }
+    public FlowState getExitState() {
+        return exitState;
+    }
+    public ThrustData[] getStageThrustData() {
+        return stageThrustData;
+    }
+    public ThrustData getPerformanceData() {
+        return performanceData;
+    }
+    public NozzleRegime getRegime() {
+        return regime;
+    }
+    public String getRegimeDescription() {
+        return regime.getDescription();
+    }
+    public double getChamberPressure() {
+        return solver.getChamberPressure();
+    }
+    public double getChamberTemp() {
+        return solver.getChamberTemp();
+    }
+    public double getCharacteristicVelocity() {
+        return solver.getCharacteristicVelocity();
+    }
+    public double getAmbientPressure() {
+        return ambientPressure;
+    }
+    public double getContractionRatio() {
+        return contractionRatio;
+    }
+    public double getExpansionRatio() {
+        return expansionRatio;
+    }
+    public double getEntranceMach() {
+        return entranceMach;
+    }
+    public double getDesignExitMach() {
+        return designExitMach;
+    }
+    public double getDesignExitPressure() {
+        return designExitPressure;
+    }
+    public double getExitShockPressure() {
+        return exitShockPressure;
+    }
+    public double getShockUpstreamMach() {
+        return shockUpstreamMach;
+    }
+    public double getShockArea() {
+        return shockArea;
+    }
+    public double getKn() {
+        return kn;
+    }
+    public double getOptimalAltitude() {
+        return optimalAltitude;
+    }
 
-    // dont know if this is needed
     public boolean hasNormalShock() {
         return regime == NozzleRegime.SHOCK_IN_NOZZLE;
     }

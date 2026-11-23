@@ -6,3 +6,7 @@
 03,Final,21,32,43,54,65
 04,Prelim,4,205,60,470,500
 04,Final,270,308,409,500,600
+
+Burn Time [s], Max Pressure [kPa], Min Temperature [kPa], Max Temperature [K], Net Mass Flow [kg/s], Thrust [N], Burn Area [m^2]
+0.000, 100, 300, 300, 0.200, 0, 0.100
+0.005, 2000, 800, 4000, 0.500, 400, 0.100
